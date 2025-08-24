@@ -10,16 +10,41 @@
 <body>
   <div class="scene">
     <div class="cube" id="dice">
-      <div class="face front">⚀</div>
-      <div class="face back">⚁</div>
-      <div class="face right">⚂</div>
-      <div class="face left">⚃</div>
-      <div class="face top">⚄</div>
-      <div class="face bottom">⚅</div>
+      <div class="face front"><div class="dot center"></div></div>
+      <div class="face back">
+        <div class="dot top-left"></div>
+        <div class="dot bottom-right"></div>
+      </div>
+      <div class="face right">
+        <div class="dot top-left"></div>
+        <div class="dot center"></div>
+        <div class="dot bottom-right"></div>
+      </div>
+      <div class="face left">
+        <div class="dot top-left"></div>
+        <div class="dot top-right"></div>
+        <div class="dot bottom-left"></div>
+        <div class="dot bottom-right"></div>
+      </div>
+      <div class="face top">
+        <div class="dot top-left"></div>
+        <div class="dot top-right"></div>
+        <div class="dot center"></div>
+        <div class="dot bottom-left"></div>
+        <div class="dot bottom-right"></div>
+      </div>
+      <div class="face bottom">
+        <div class="dot top-left"></div>
+        <div class="dot top-right"></div>
+        <div class="dot mid-left"></div>
+        <div class="dot mid-right"></div>
+        <div class="dot bottom-left"></div>
+        <div class="dot bottom-right"></div>
+      </div>
     </div>
   </div>
 
-  <!-- hidden dot for magician -->
+  <!-- magician's secret dot -->
   <div id="magicDot"></div>
 
   <script src="app.js"></script>
