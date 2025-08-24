@@ -1,25 +1,31 @@
 const dice = document.getElementById("dice");
 const magicDot = document.getElementById("magicDot");
 
-let fixNumber = null;       // saved number from setup
-let fixActive = false;      // true only after long press
+let fixNumber = null;    // setup ke baad yeh save hoga
+let fixActive = false;   // long press ke baad ON hoga
 let setupTapCount = 0;
 let longPressTimer = null;
 
-// 🎲 Roll dice animation
+// 🎲 Dice roll function
 function rollDice(forcedNumber = null) {
   let result = forcedNumber || Math.floor(Math.random() * 6) + 1;
 
-  const xRot = [0, -90, 90, 0, 0, 180];
-  const yRot = [0, 0, 0, -90, 90, 0];
+  const rotations = {
+    1: {x: 0, y: 0},
+    2: {x: 0, y: 180},
+    3: {x: 0, y: -90},
+    4: {x: 0, y: 90},
+    5: {x: -90, y: 0},
+    6: {x: 90, y: 0}
+  };
 
   dice.style.transform =
-    `rotateX(${xRot[result-1]}deg) rotateY(${yRot[result-1]}deg) rotateZ(${Math.random()*360}deg)`;
+    `rotateX(${rotations[result].x}deg) rotateY(${rotations[result].y}deg) rotateZ(${Math.random()*360}deg)`;
 
   return result;
 }
 
-// 👆 5 taps to enter setup mode
+// 👆 5 taps = setup mode
 document.body.addEventListener("click", () => {
   setupTapCount++;
   if (setupTapCount >= 5) {
@@ -27,7 +33,7 @@ document.body.addEventListener("click", () => {
     const num = prompt("Choose fix number (1-6):");
     if (num >= 1 && num <= 6) {
       fixNumber = parseInt(num);
-      alert("Fix number saved!");
+      alert("Fix number saved: " + fixNumber);
     }
   }
 });
@@ -41,12 +47,11 @@ document.body.addEventListener("mousedown", () => {
     }
   }, 3000);
 });
-
 document.body.addEventListener("mouseup", () => {
   clearTimeout(longPressTimer);
 });
 
-// 🎲 Roll on swipe / click
+// 🎲 Roll on click
 dice.addEventListener("click", () => {
   let result;
   if (fixActive) {
