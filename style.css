@@ -1,0 +1,52 @@
+body {
+  background: black;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+#dice {
+  width: 120px;
+  height: 120px;
+  margin: 40px auto;
+  transform-style: preserve-3d;
+  transition: transform 1s;
+  background-size: cover;
+  background-position: center;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(255,255,255,0.2);
+}
+
+.controls button {
+  background: #222;
+  color: white;
+  border: 1px solid #555;
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.controls button:hover {
+  background: #444;
+}
+
+.fix-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+#dice[data-value="1"] { background-image: url("dice1.png"); }
+#dice[data-value="2"] { background-image: url("dice2.png"); }
+#dice[data-value="3"] { background-image: url("dice3.png"); }
+#dice[data-value="4"] { background-image: url("dice4.png"); }
+#dice[data-value="5"] { background-image: url("dice5.png"); }
+#dice[data-value="6"] { background-image: url("dice6.png"); }
