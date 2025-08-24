@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Random Dice</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="assets/logo.png" type="image/png"/>
+</head>
+<body>
+  <div id="dice-container"></div>
+  <div id="fixed-number-popup" class="hidden">
+    <div class="popup-content">
+      <h2>Choose Fixed Number</h2>
+      <div id="number-options"></div>
+      <button id="close-popup">Cancel</button>
+    </div>
+  </div>
+  <div id="white-dot" class="hidden"></div>
+  <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
+  <script src="dice.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+  </script>
+</body>
+</html>
