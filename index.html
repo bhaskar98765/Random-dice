@@ -3,29 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Random Dice 🎲</title>
+  <title>Random Dice</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <h1>🎲 Random Dice</h1>
-
-  <div id="dice" data-value="1"></div>
-
-  <div class="controls">
-    <button id="rollBtn">Roll</button>
-    <br><br>
-    <p>Fix Number:</p>
-    <div class="fix-buttons">
-      <button class="fix-btn" data-value="1">1</button>
-      <button class="fix-btn" data-value="2">2</button>
-      <button class="fix-btn" data-value="3">3</button>
-      <button class="fix-btn" data-value="4">4</button>
-      <button class="fix-btn" data-value="5">5</button>
-      <button class="fix-btn" data-value="6">6</button>
+  <div class="scene">
+    <div class="cube" id="dice">
+      <div class="face front">⚀</div>
+      <div class="face back">⚁</div>
+      <div class="face right">⚂</div>
+      <div class="face left">⚃</div>
+      <div class="face top">⚄</div>
+      <div class="face bottom">⚅</div>
     </div>
-    <br>
-    <button id="fixActivateBtn">Activate Fix</button>
   </div>
+
+  <!-- hidden dot for magician -->
+  <div id="magicDot"></div>
 
   <script src="app.js"></script>
 </body>
