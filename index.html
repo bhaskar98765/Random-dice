@@ -1,29 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Random Dice</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="assets/logo.png" type="image/png"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Random Dice 🎲</title>
+  <meta name="theme-color" content="#000000" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+
+  <style>
+    :root {
+      --size: min(18vmin, 140px); /* thumb-sized dice — change to adjust */
+      --half: calc(var(--size) / 2);
+      --pip: calc(var(--size) * 0.16);
+      --pip-gap: calc(var(--size) * 0.28);
+      --radius: 18px;
+    }
+
+    html,body { margin:0; padding:0; height:100%; background:#000; overflow:hidden; }
+    body { touch-action:none; -webkit-user-select:none; user-select:none; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+
+    .stage { position:fixed; inset:0; display:grid; place-items:center; perspective:900px; }
+    .dice-wrap { width:var(--size); height:var(--size); position:relative; }
+    .dice {
+      width:100%; height:100%; position:absolute; transform-style:preserve-3d; will-change:transform;
+      filter: drop-shadow(0 10px 22px rgba(0,0,0,0.6));
+      transition: transform 0.65s cubic-bezier(.22,.9,.3,1);
+      border-radius: var(--radius);
+    }
+
+    .face {
+      position:absolute; width:100%; height:100%; background:#fff; border-radius: var(--radius);
+      box-shadow:
+        inset 0 0 0 2px rgba(0,0,0,0.06),
+        inset 0 -8px 18px rgba(0,0,0,0.08),
+        inset 0 8px 18px rgba(255,255,255,0.25);
+      display:grid; place-items:center;
+    }
+
+    /* 3D placement per face */
+    .f1 { transform: rotateY(   0deg) translateZ(var(--half)); }  /* front -> 1 */
+    .f6 { transform: rotateY( 180deg) translateZ(var(--half)); }  /* back  -> 6 */
+    .f2 { transform: rotateY(  90deg) translateZ(var(--half)); }  /* right -> 2 */
+    .f5 { transform: rotateY( -90deg) translateZ(var(--half)); }  /* left  -> 5 */
+    .f3 { transform: rotateX(  90deg) translateZ(var(--half)); }  /* top   -> 3 */
+    .f4 { transform: rotateX( -90deg) translateZ(var(--half)); }  /* bottom-> 4 */
+
+    /* Pips */
+    .pips { position:relative; width:100%; height:100%; }
+    .pip {
+      position:absolute; width:var(--pip); height:var(--pip); background:#000; border-radius:50%;
+      transform: translate(-50%,-50%); box-shadow:0 1px 0 rgba(255,255,255,0.5), inset 0 2px 2px rgba(0,0,0,0.35);
+    }
+
+    /* positions for pips */
+    .c  { left:50%; top:50%; }
+    .tl { left: calc(50% - var(--pip-gap)); top: calc(50% - var(--pip-gap)); }
+    .tr { left: calc(50% + var(--pip-gap)); top: calc(50% - var(--pip-gap)); }
+    .bl { left: calc(50% - var(--pip-gap)); top: calc(50% + var(--pip-gap)); }
+    .br { left: calc(50% + var(--pip-gap)); top: calc(50% + var(--pip-gap)); }
+    .ml { left: calc(50% - var(--pip-gap)); top: 50%; }
+    .mr { left: calc(50% + var(--pip-gap)); top: 50%; }
+    .mt { left:50%; top: calc(50% - var(--pip-gap)); }
+    .mb { left:50%; top: calc(50% + var(--pip-gap)); }
+
+    /* tiny white indicator dot (hidden by default) */
+    #indicator {
+      position: fixed; top: 6px; right:6px; width:8px; height:8px; background:#fff; border-radius:50%;
+      display:none; z-index: 30; box-shadow: 0 0 4px rgba(255,255,255,0.85);
+    }
+
+    /* Setup overlay (secret) */
+    #setupOverlay {
+      position:fixed; inset:0; display:none; place-items:center; z-index:40; background: rgba(0,0,0,0.92); color:#fff;
+    }
+    #setupBox {
+      width:min(92vw,360px); background:#121212; border:1px solid #2a2a2a; border-radius:16px; padding:16px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.7);
+    }
+    #setupBox h2 { margin:0 0 10px; font-size:18px; font-weight:600; }
+    #grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px; }
+    .nbtn { background:#0e0e0e; border:1px solid #2b2b2b; border-radius:12px; padding:12px 0; color:#fff; font-size:18px; text-align:center; }
+    .nbtn:active { transform: scale(0.98); }
+    #setupActions { display:flex; gap:10px; margin-top:12px; }
+    .sbtn { flex:1; background:#0a0a0a; border:1px solid #333; border-radius:10px; padding:10px; color:#ddd; }
+    .sbtn.primary { background:#1a1a1a; color:#fff; border-color:#444; }
+
+    /* toast */
+    #toast {
+      position: fixed; left:50%; bottom:18px; transform: translateX(-50%);
+      background: rgba(255,255,255,0.08); color:#fff; border:1px solid rgba(255,255,255,0.2);
+      border-radius:999px; padding:8px 14px; font-size:13px; display:none; z-index:50;
+    }
+  </style>
 </head>
 <body>
-  <div id="dice-container"></div>
-  <div id="fixed-number-popup" class="hidden">
-    <div class="popup-content">
-      <h2>Choose Fixed Number</h2>
-      <div id="number-options"></div>
-      <button id="close-popup">Cancel</button>
+  <div class="stage">
+    <div class="dice-wrap">
+      <div id="dice" class="dice" aria-label="dice" role="img"></div>
     </div>
   </div>
-  <div id="white-dot" class="hidden"></div>
-  <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
-  <script src="dice.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js');
-    }
-  </script>
+
+  <div id="indicator"></div>
+
+  <!-- secret setup UI (appears after 5 quick taps) -->
+  <div id="setupOverlay">
+    <div id="setupBox">
+      <h2>Secret Setup</h2>
+      <div>Choose your fixed number:</div>
+      <div id="grid"></div>
+      <div id="setupActions">
+        <button id="clearFixed" class="sbtn">Clear</button>
+        <button id="closeSetup" class="sbtn primary">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script src="app.js"></script>
 </body>
 </html>
