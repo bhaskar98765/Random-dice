@@ -1,54 +1,60 @@
-let fixNumber = null;      // user-selected fix number
-let fixActive = false;     // fix mode on/off
-
 const dice = document.getElementById("dice");
+const magicDot = document.getElementById("magicDot");
 
-// Roll function
-function rollDice() {
-    let result;
+let fixNumber = null;       // saved number from setup
+let fixActive = false;      // true only after long press
+let setupTapCount = 0;
+let longPressTimer = null;
 
-    if (fixActive && fixNumber !== null) {
-        result = fixNumber; // show reserved fix number
-        fixActive = false;  // reset after one use
-    } else {
-        result = Math.floor(Math.random() * 6) + 1; // random
+// 🎲 Roll dice animation
+function rollDice(forcedNumber = null) {
+  let result = forcedNumber || Math.floor(Math.random() * 6) + 1;
+
+  const xRot = [0, -90, 90, 0, 0, 180];
+  const yRot = [0, 0, 0, -90, 90, 0];
+
+  dice.style.transform =
+    `rotateX(${xRot[result-1]}deg) rotateY(${yRot[result-1]}deg) rotateZ(${Math.random()*360}deg)`;
+
+  return result;
+}
+
+// 👆 5 taps to enter setup mode
+document.body.addEventListener("click", () => {
+  setupTapCount++;
+  if (setupTapCount >= 5) {
+    setupTapCount = 0;
+    const num = prompt("Choose fix number (1-6):");
+    if (num >= 1 && num <= 6) {
+      fixNumber = parseInt(num);
+      alert("Fix number saved!");
     }
-
-    // Random 3D rotation
-    const xRotation = Math.floor(Math.random() * 360);
-    const yRotation = Math.floor(Math.random() * 360);
-
-    dice.style.transform = `rotateX(${xRotation}deg) rotateY(${yRotation}deg)`;
-
-    // Show face after rotation
-    setTimeout(() => {
-        dice.setAttribute("data-value", result);
-    }, 300);
-
-    return result;
-}
-
-// Fix number select
-function setFixNumber(num) {
-    fixNumber = num;
-    alert(`Fix number ${num} select ho gaya. Use karne ke liye Activate Fix dabao.`);
-}
-
-// Activate fix mode
-function activateFix() {
-    if (fixNumber === null) {
-        alert("Pehle fix number select karo!");
-        return;
-    }
-    fixActive = true;
-    alert(`Fix mode active! Next roll par ${fixNumber} aayega.`);
-}
-
-// Event listeners
-document.getElementById("rollBtn").addEventListener("click", rollDice);
-document.querySelectorAll(".fix-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-        setFixNumber(parseInt(btn.dataset.value));
-    });
+  }
 });
-document.getElementById("fixActivateBtn").addEventListener("click", activateFix);
+
+// ✋ Long press = activate fix
+document.body.addEventListener("mousedown", () => {
+  longPressTimer = setTimeout(() => {
+    if (fixNumber !== null) {
+      fixActive = true;
+      magicDot.style.display = "block";
+    }
+  }, 3000);
+});
+
+document.body.addEventListener("mouseup", () => {
+  clearTimeout(longPressTimer);
+});
+
+// 🎲 Roll on swipe / click
+dice.addEventListener("click", () => {
+  let result;
+  if (fixActive) {
+    result = rollDice(fixNumber);
+    fixActive = false;
+    magicDot.style.display = "none";
+  } else {
+    result = rollDice();
+  }
+  console.log("Rolled:", result);
+});
