@@ -1,20 +1,12 @@
 {
   "name": "Random Dice",
-  "short_name": "Dice",
-  "start_url": "./index.html",
+  "short_name": "Random Dice",
+  "start_url": ".",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#000",
+  "theme_color": "#000",
   "icons": [
-    {
-      "src": "icons/dice-icon.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icons/dice-icon.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
+    { "src": "dice.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "dice.png", "sizes": "512x512", "type": "image/png" }
   ]
 }
